@@ -4,6 +4,7 @@ import requests
 import time
 import random
 from timeit import default_timer as timer
+import csv
 
 # pip install selenium etc..
 
@@ -45,11 +46,16 @@ def get_html(url):
 
 
 # 5.
+
+
 def get_all_links_in_page(driver, url):
   driver.get(url)
   links = driver.find_elements_by_css_selector("a")
+  return_links = []
   for link in links:
     print("LINK:" + link.get_attribute("href"))
+    return_links.append([link.get_attribute("href")])
+  return return_links
 
 # 7.
 def get_title(driver, url):
@@ -80,6 +86,12 @@ def test__wait__when_measure_multiple_times__should_return_waiting_average_equal
   print(average_waiting_time)
   return 0.5 < average_waiting_time and average_waiting_time < 1.5
 
+# 11.
+def write_links_to_csv(links):
+  with open('Links.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerows(links)
+
 
 # -----------------------
 
@@ -92,9 +104,11 @@ driver = webdriver.Chrome(PATH)
 get_html(url)
 get_all_links_in_page(driver, url)
 
-print(test__get_title__when_url_aruodas__should_return_default_name())
+# print(test__get_title__when_url_aruodas__should_return_default_name())
+# print(test__wait__when_measure_multiple_times__should_return_waiting_average_equal_to_mean())
 
-#print(test__wait__when_measure_multiple_times__should_return_waiting_average_equal_to_mean())
+links = get_all_links_in_page(driver, url)
+write_links_to_csv(links)
 
 driver.quit()
 
